@@ -1,0 +1,23 @@
+{
+	"name": "graphql",
+	"version": "0.1.0",
+	"publisher": "mquandalle",
+	"engines": { "vscode": "*" },
+	"contributes": {
+		"languages": [{
+			"id": "graphql",
+			"extensions": [".graphql", ".gql"],
+			"aliases": ["GraphQL", "graphql"],
+			"configuration": "./graphql.configuration.json"
+		}],
+		"grammars": [{
+			"language": "graphql",
+			"path": "./syntaxes/graphql.json",
+			"scopeName":"source.graphql"
+		}],
+		"snippets": [{
+			"language": "graphql",
+			"path": "./snippets/graphql.json"
+		}]
+	}
+}
