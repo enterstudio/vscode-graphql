@@ -2,8 +2,8 @@
   "name": "GraphQL",
   "scopeName": "source.graphql",
   "fileTypes": [
-      "graphql",
-      "gql"
+      "gql",
+      "graphql"
   ],
   "patterns": [
     {
