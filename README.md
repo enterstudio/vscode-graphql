@@ -1,5 +1,7 @@
 # GraphQL for VS Code
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/apollographql/vscode-graphql.svg)](https://greenkeeper.io/)
+
 This Visual Studio Code extension provides syntax highlighting and code snippets for the GraphQL language. Files ending with `.gql` or `.graphql` will be automatically handled.
 
 ![Capture of the extension is VS Code](images/capture.png)
