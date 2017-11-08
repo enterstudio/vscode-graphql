@@ -1,0 +1,24 @@
+{
+	"name": "vscode-graphql",
+	"description": "A language server for GraphQL",
+	"author": "Apollo GraphQL",
+	"license": "MIT",
+	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/apollographql/vscode-graphql"
+	},
+	"engines": {
+		"node": "*"
+	},
+	"dependencies": {
+		"graphql-language-service-server": "^1.0.15",
+		"regenerator-runtime": "^0.11.0",
+		"vscode-languageserver": "^3.4.2"
+	},
+	"scripts": {
+		"installServer": "installServerIntoExtension ../client ./package.json ./tsconfig.json",
+		"compile": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc -p .",
+		"watch": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc -w -p ."
+	}
+}
