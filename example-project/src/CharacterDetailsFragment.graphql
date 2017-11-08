@@ -1,0 +1,6 @@
+fragment CharacterDetails on Character {
+  name
+  ... on Droid {
+    primaryFunction
+  }
+}
