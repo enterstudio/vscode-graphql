@@ -1,0 +1,76 @@
+{
+	"name": "vscode-graphql",
+	"description": "A language server for GraphQL",
+	"author": "Apollo GraphQL",
+	"license": "MIT",
+	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/apollographql/vscode-graphql"
+	},
+	"engines": {
+		"vscode": "^1.19.0"
+	},
+	"publisher": "apollographql",
+	"categories": [
+		"Languages",
+		"Linters"
+	],
+	"activationEvents": [
+		"workspaceContains:.graphqlconfig*"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"configuration": {},
+		"jsonValidation": [
+			{
+				"fileMatch": ".graphqlconfig",
+				"url": "http://json.schemastore.org/jshintrc"
+			}
+		],
+		"languages": [
+			{
+				"id": "graphql",
+				"extensions": [
+					".graphql",
+					".gql"
+				],
+				"aliases": [
+					"GraphQL"
+				],
+				"configuration": "./graphql.configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "graphql",
+				"scopeName": "source.graphql",
+				"path": "./syntaxes/graphql.json"
+			},
+			{
+				"injectTo": [
+					"source.js",
+					"source.ts",
+					"source.js.jsx",
+					"source.tsx"
+				],
+				"scopeName": "inline.graphql",
+				"path": "./syntaxes/graphql.js.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -p ./",
+		"watch": "tsc -w -p ./",
+		"update-vscode": "node ./node_modules/vscode/bin/install",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"dependencies": {
+		"vscode": "^1.1.10",
+		"vscode-languageclient": "next"
+	}
+}

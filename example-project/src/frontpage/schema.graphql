@@ -1,0 +1,31 @@
+# source: http://localhost:8080/graphql
+# timestamp: Mon Dec 04 2017 14:01:40 GMT+0100 (CET)
+
+type Author {
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post]
+}
+
+# this schema allows the following mutation:
+type Mutation {
+  upvotePost(postId: Int!): Post
+}
+
+type Post {
+  id: Int!
+  title: String
+  author: Author
+  votes: Int
+}
+
+# the schema allows the following query:
+type Query {
+  posts: [Post]
+  author(id: Int!): Author
+}
+
+type Subscription {
+  postUpvoted: Post
+}

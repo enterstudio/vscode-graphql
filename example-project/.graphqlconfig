@@ -1,0 +1,22 @@
+{
+  "projects": {
+    "starwars": {
+        "schemaPath": "src/starwars/schema.graphql",
+        "includes": ["src/starwars/*.graphql"],
+        "extensions": {
+          "endpoints": {
+            "default": "http://localhost:8080/graphql"
+          }
+        }
+    },
+    "frontpage": {
+      "schemaPath": "src/frontpage/schema.graphql",
+      "includes": ["src/frontpage/*.graphql"],
+      "extensions": {
+        "endpoints": {
+          "default": "http://localhost:8080/graphql"
+        }
+      }
+    }
+  }
+}

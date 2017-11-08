@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "../client/server",
+    "lib": ["es2017", "esnext.asynciterable", "dom"],
+    "removeComments": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true
+	},
+	"exclude": [
+		"node_modules"
+	]
+}
