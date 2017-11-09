@@ -8,17 +8,6 @@ import {
   IPCMessageWriter,
   createConnection,
   IConnection,
-  DidOpenTextDocumentNotification,
-  PublishDiagnosticsNotification,
-  DidSaveTextDocumentNotification,
-  DidChangeTextDocumentNotification,
-  DidCloseTextDocumentNotification,
-  ShutdownRequest,
-  ExitNotification,
-  InitializeRequest,
-  CompletionRequest,
-  CompletionResolveRequest,
-  DefinitionRequest
 } from 'vscode-languageserver';
 
 // Using require instead of import to avoid missing type definition error
@@ -26,51 +15,60 @@ const { MessageProcessor } = require('graphql-language-service-server/dist/Messa
 
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 
-addHandlers(connection);
+const messageProcessor = new MessageProcessor(connection.console);
+
+connection.onInitialize(async (params) => {
+  return messageProcessor.handleInitializeRequest(params);
+});
+
+connection.onShutdown(() => {
+  messageProcessor.handleShutdownRequest();
+});
+
+connection.onExit(() => {
+  messageProcessor.handleExitNotification();
+});
+
+connection.onDidOpenTextDocument(async (params) => {
+  connection.console.log(`${params.textDocument.uri} opened.`);
+  
+  const diagnostics = await messageProcessor.handleDidOpenOrSaveNotification(params);
+  if (diagnostics) {
+    connection.sendDiagnostics(diagnostics);
+  }
+});
+
+connection.onDidChangeTextDocument(async (params) => {
+  connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
+
+  const diagnostics = await messageProcessor.handleDidChangeNotification(params);
+  if (diagnostics) {
+    connection.sendDiagnostics(diagnostics);
+  }
+});
+
+connection.onDidCloseTextDocument(async (params) => {
+  connection.console.log(`${params.textDocument.uri} closed.`);
+  
+  const diagnostics = await messageProcessor.handleDidCloseNotification(params);
+  if (diagnostics) {
+    connection.sendDiagnostics(diagnostics);
+  }
+});
 
 connection.onDidChangeWatchedFiles(_change => {
   connection.console.log('We received an file change event');
 });
 
+connection.onCompletion(async (params) => {
+  return messageProcessor.handleCompletionRequest(params);
+});
+
+connection.onCompletionResolve(item => item);
+
+connection.onDefinition(params => {
+  return messageProcessor.handleDefinitionRequest(params);
+});
+
 // Listen on the connection
 connection.listen();
-
-// Copied from graphql-language-service-server/dist/startServer
-function addHandlers(connection: IConnection): void {
-  const messageProcessor = new MessageProcessor(connection.console);
-  connection.onNotification(DidOpenTextDocumentNotification.type, async params => {
-    const diagnostics = await messageProcessor.handleDidOpenOrSaveNotification(params);
-    if (diagnostics) {
-      connection.sendNotification(PublishDiagnosticsNotification.type, diagnostics);
-    }
-  });
-  connection.onNotification(DidSaveTextDocumentNotification.type, async params => {
-    const diagnostics = await messageProcessor.handleDidOpenOrSaveNotification(params);
-    if (diagnostics) {
-      connection.sendNotification(PublishDiagnosticsNotification.type, diagnostics);
-    }
-  });
-  connection.onNotification(DidChangeTextDocumentNotification.type, async params => {
-    const diagnostics = await messageProcessor.handleDidChangeNotification(params);
-    if (diagnostics) {
-      connection.sendNotification(PublishDiagnosticsNotification.type, diagnostics);
-    }
-  });
-
-  connection.onNotification(DidCloseTextDocumentNotification.type, params =>
-    messageProcessor.handleDidCloseNotification(params)
-  );
-  connection.onRequest(ShutdownRequest.type, () => messageProcessor.handleShutdownRequest());
-  connection.onNotification(ExitNotification.type, () => messageProcessor.handleExitNotification());
-
-  // Ignore cancel requests
-  connection.onNotification('$/cancelRequest', () => ({}));
-
-  connection.onRequest(InitializeRequest.type, (params, token) =>
-    messageProcessor.handleInitializeRequest(params, token)
-  );
-
-  connection.onRequest(CompletionRequest.type, params => messageProcessor.handleCompletionRequest(params));
-  connection.onRequest(CompletionResolveRequest.type, item => item);
-  connection.onRequest(DefinitionRequest.type, params => messageProcessor.handleDefinitionRequest(params));
-}
