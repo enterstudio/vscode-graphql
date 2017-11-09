@@ -74,8 +74,8 @@
 		"postinstall": "node ./node_modules/vscode/bin/install"
 	},
 	"dependencies": {
-		"graphql-language-service-server": "^1.0.15",
 		"vscode": "^1.1.5",
-		"vscode-languageclient": "^3.4.2"
+		"vscode-languageclient": "^3.4.2",
+		"graphql-language-service-server": "^1.0.15"
 	}
 }

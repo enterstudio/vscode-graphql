@@ -1,6 +1,4 @@
 {
-	"typescript.tsdk": "./node_modules/typescript/lib",
-	"typescript.tsc.autoDetect": "off",
 	"prettier.printWidth": 110,
 	"prettier.singleQuote": true,
 	"search.exclude": {
