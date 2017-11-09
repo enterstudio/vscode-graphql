@@ -14,8 +14,7 @@
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceRoot}/client/out/**/*.js"
-			],
-			"preLaunchTask": "watch:client"
+			]
 		},
 		{
 			"name": "Attach to Server",
@@ -25,8 +24,7 @@
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceRoot}/client/server/**/*.js"
-			],
-			"preLaunchTask": "watch:server"
+			]
 		}
 	]
 }
