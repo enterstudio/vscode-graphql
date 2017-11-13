@@ -2,6 +2,7 @@
 
 // Seems to be needed for graphql-language-service-server
 import 'regenerator-runtime/runtime';
+import { spawn } from 'child_process';
 
 import {
   IPCMessageReader,
@@ -16,6 +17,60 @@ const { MessageProcessor } = require('graphql-language-service-server/dist/Messa
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 
 const messageProcessor = new MessageProcessor(connection.console);
+
+/**
+ * Trigger a recompile of the queries using persistgraphql. 
+ */
+function triggerPersistCompile(verbose: boolean = false) {
+  // TODO Make this so that your package.json doesn't have to have a 
+  // "persistgraphql" run reference - you can call it something else, set
+  // the options somewhere in .vscode, etc.
+  const persistSpawn = spawn('npm', ['run', 'persistgraphql']);
+  persistSpawn.stdout.on('data', (data) => {
+    console.log(`Received this from npm run persistgraphql (stdout): ${data}`);
+    if (verbose) {
+      connection.window.showInformationMessage("Compiled persisted queries successfully.");
+    }
+  });
+
+  persistSpawn.stderr.on('data', (data) => {
+    console.log(`Received this from npm run persistgraphql (stderr): ${data}`);
+
+    // TODO Make this error message more helpful.
+    if (verbose) {
+      connection.window.showErrorMessage("Compiling your queries caused an error; check the logs.");
+    }
+  });
+}
+
+/**
+ * Handle saving a document.
+ * @param textUri Uri (e.g. "file:///root/scheme.graphql") of the file that was just saved.
+ */
+function handleSavedDocument(textUri: string) {
+  const pathPieces = textUri.split('/');
+  const filename = pathPieces[pathPieces.length - 1];
+
+  // TODO There's probably some more VS Code compatible way of
+  // doing this.
+  const persistCompileTriggers = [
+    /\.js$/,
+    /\.ts$/,
+    /\.graphql$/,
+    /\.gql$/
+  ];
+
+  // figure out what the extension is on this textUri  
+  const extensions = filename.split('.');
+  const extension = extensions[extensions.length - 1];
+  const compilePersist = persistCompileTriggers.some((trigger) => {
+    return trigger.test(extension);
+  });
+
+  if (compilePersist) {
+    triggerPersistCompile();
+  }
+}
 
 connection.onInitialize(async (params) => {
   return messageProcessor.handleInitializeRequest(params);
@@ -56,7 +111,15 @@ connection.onDidCloseTextDocument(async (params) => {
   }
 });
 
+connection.onDidSaveTextDocument(async (params) => {
+  connection.console.log('Params received from the document about to be saved: ');
+  connection.console.log(JSON.stringify(params));
+  const uri = params.textDocument.uri;
+  handleSavedDocument(uri);
+});
+
 connection.onDidChangeWatchedFiles(_change => {
+  connection.console.log('CHANGED WATCHED FILE.');
   connection.console.log('We received an file change event');
 });
 

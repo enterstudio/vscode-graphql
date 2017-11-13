@@ -1,0 +1,15 @@
+{
+  "name": "example-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "persistgraphql": "persistgraphql src/"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "persistgraphql": "^0.3.11"
+  }
+}

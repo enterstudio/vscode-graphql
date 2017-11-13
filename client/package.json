@@ -17,7 +17,8 @@
 		"Linters"
 	],
 	"activationEvents": [
-		"workspaceContains:.graphqlconfig"
+		"workspaceContains:.graphqlconfig",
+		"onCommand:graphql.compilePersistedQueries"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
